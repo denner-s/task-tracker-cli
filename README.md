@@ -134,8 +134,7 @@ Distribuído sob a licença MIT. Veja [LICENSE](LICENSE) para detalhes.
 ---
 
 ## 🙌 Agradecimentos
-- Equipe do Go por uma linguagem incrível
-- Comunidade open-source por inspiração
+- Roadmap.sh (https://roadmap.sh/projects/task-tracker)
 
 ---
 
