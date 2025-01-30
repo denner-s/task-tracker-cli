@@ -5,7 +5,6 @@ import (
 	"github.com/denner-s/task-tracker-cli/core"
 	"os"
 	"strconv"
-	"time"
 )
 
 type CLI struct {
@@ -18,9 +17,10 @@ func NewCLI(service *core.TaskService) *CLI {
 
 func (c *CLI) HandleCommand(args []string) {
 	if len(args) == 0 {
-		fmt.Println("Comando inválido. Use add, update, delete, mark-in-progress, mark-done ou list")
+		fmt.Println("Available commands: add, update, delete, mark-in-progress, mark-done, list")
 		os.Exit(1)
 	}
+
 	switch args[0] {
 	case "add":
 		c.handleAdd(args[1:])
@@ -35,83 +35,90 @@ func (c *CLI) HandleCommand(args []string) {
 	case "list":
 		c.handleList(args[1:])
 	default:
-		fmt.Println("Comando inválido")
+		fmt.Println("Invalid command")
 		os.Exit(1)
 	}
 }
 
 func (c *CLI) handleAdd(args []string) {
 	if len(args) < 1 {
-		fmt.Println("Uso: add <descrição>")
+		fmt.Println("Usage: add <description>")
 		os.Exit(1)
 	}
+
 	task, err := c.service.AddTask(args[0])
 	if err != nil {
-		fmt.Printf("Erro ao adicionar tarefa: %v\n", err)
+		fmt.Printf("Error adding task: %v\n", err)
 		os.Exit(1)
 	}
-	fmt.Printf("Tarefa adicionada com sucesso (ID: %d)\n", task.ID)
+	fmt.Printf("Task added successfully (ID: %d)\n", task.ID)
 }
 
 func (c *CLI) handleUpdate(args []string) {
 	if len(args) < 2 {
-		fmt.Println("Uso: update <ID> <nova descrição>")
+		fmt.Println("Usage: update <id> <new_description>")
 		os.Exit(1)
 	}
+
 	id, err := strconv.Atoi(args[0])
 	if err != nil {
-		fmt.Printf("ID inválido: %v\n", err)
+		fmt.Printf("Invalid ID: %v\n", err)
 		os.Exit(1)
 	}
+
 	task, err := c.service.UpdateTask(id, args[1])
 	if err != nil {
-		fmt.Printf("Erro ao atualizar tarefa: %v\n", err)
+		fmt.Printf("Error updating task: %v\n", err)
 		os.Exit(1)
 	}
-	fmt.Printf("Tarefa atualizada com sucesso (ID: %d)\n", task.ID)
+	fmt.Printf("Task updated successfully (ID: %d)\n", task.ID)
 }
 
 func (c *CLI) handleDelete(args []string) {
 	if len(args) < 1 {
-		fmt.Println("Uso: delete <ID>")
+		fmt.Println("Usage: delete <id>")
 		os.Exit(1)
 	}
+
 	id, err := strconv.Atoi(args[0])
 	if err != nil {
-		fmt.Printf("ID inválido: %v\n", err)
+		fmt.Printf("Invalid ID: %v\n", err)
 		os.Exit(1)
 	}
+
 	if err := c.service.DeleteTask(id); err != nil {
-		fmt.Printf("Erro ao excluir tarefa: %v\n", err)
+		fmt.Printf("Error deleting task: %v\n", err)
 		os.Exit(1)
 	}
-	fmt.Printf("Tarefa excluída com sucesso (ID: %d)\n", id)
+	fmt.Printf("Task deleted successfully (ID: %d)\n", id)
 }
 
 func (c *CLI) handleMarkInProgress(args []string) {
-	c.handleMarkStatus(args, "em andamento", core.StatusInProgress)
+	c.handleMarkStatus(args, "in-progress", core.StatusInProgress)
 }
 
 func (c *CLI) handleMarkDone(args []string) {
-	c.handleMarkStatus(args, "concluída", core.StatusDone)
+	c.handleMarkStatus(args, "done", core.StatusDone)
 }
 
 func (c *CLI) handleMarkStatus(args []string, status string, targetStatus core.TaskStatus) {
 	if len(args) < 1 {
-		fmt.Printf("Uso: mark-%s <ID>\n", status)
+		fmt.Printf("Usage: mark-%s <id>\n", status)
 		os.Exit(1)
 	}
+
 	id, err := strconv.Atoi(args[0])
 	if err != nil {
-		fmt.Printf("ID inválido: %v\n", err)
+		fmt.Printf("Invalid ID: %v\n", err)
 		os.Exit(1)
 	}
+
 	task, err := c.service.updateStatus(id, targetStatus)
 	if err != nil {
-		fmt.Printf("Erro ao marcar tarefa como %s: %v\n", status, err)
+		fmt.Printf("Error marking task as %s: %v\n", status, err)
 		os.Exit(1)
 	}
-	fmt.Printf("Tarefa marcada como %s (ID: %d)\n", status, task.ID)
+	fmt.Printf("Task marked as %s (ID: %d)\n", status, task.ID)
 }
 
 func (c *CLI) handleList(args []string) {
@@ -119,17 +126,25 @@ func (c *CLI) handleList(args []string) {
 	if len(args) > 0 {
 		filter = args[0]
 	}
+
 	tasks, err := c.service.ListTasks(filter)
 	if err != nil {
-		fmt.Printf("Erro ao listar tarefas: %v\n", err)
+		fmt.Printf("Error listing tasks: %v\n", err)
 		os.Exit(1)
 	}
+
 	if len(tasks) == 0 {
-		fmt.Println("Nenhuma tarefa encontrada")
+		fmt.Println("No tasks found")
 		return
 	}
+
 	for _, task := range tasks {
-		fmt.Printf("ID: %d, Descrição: %s, Status: %s, Criado em: %s, Atualizado em: %s\n",
-			task.ID, task.Description, task.Status, task.CreatedAt.Format(time.RFC3339), task.UpdatedAt.Format(time.RFC3339))
+		fmt.Printf("ID: %d | %s | Status: %s | Created: %s | Updated: %s\n",
+			task.ID,
+			task.Description,
+			task.Status,
+			task.CreatedAt.Format("2006-01-02 15:04"),
+			task.UpdatedAt.Format("2006-01-02 15:04"),
+		)
 	}
 }

@@ -8,8 +8,8 @@ import (
 )
 
 func main() {
-	repo := storage.NewFileTaskRepository(`tasks.json`)
+	repo := storage.NewFileRepository("tasks.json")
 	service := core.NewTaskService(repo)
-	cli_ := cli.NewCLI(service)
-	cli_.HandleCommand(os.Args[1:])
+	cliApp := cli.NewCLI(service)
+	cliApp.HandleCommand(os.Args[1:])
 }
