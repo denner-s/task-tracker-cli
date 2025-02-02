@@ -36,7 +36,7 @@ Recursos principais:
 
 1. **Clone o repositório**:
    ```bash
-   git clone https://github.com/seu-usuario/task-tracker.git
+   git clone https://github.com/denner-s/task-tracker.git
    cd task-tracker
    ```
 
@@ -141,6 +141,6 @@ Distribuído sob a licença MIT. Veja [LICENSE](LICENSE) para detalhes.
 ## 📞 Contato
 **Denner Sousa**  
 - Email: denner.sousa@outlook.com
-- GitHub: [@seu-usuario](https://github.com/denner-s)  
+- GitHub: [@denner-s](https://github.com/denner-s)  
 
 
